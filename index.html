@@ -554,7 +554,7 @@
               <span class="text-gray-400 text-xs">All</span>
             </div>
             <div class="flex flex-col items-center min-w-[50px] sm:min-w-[60px] cursor-pointer group" onclick="filterByCategory('starters')">
-              <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#1A1A1A] flex items-center justify-center text-xl sm:text-2xl mb-1 group-hover:bg-[#A8E63D] transition-colors">🥗</div>
+              <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#1A1A1A] flex items-center justify-center text-xl sm:text-2xl mb-1 group-hover:bg-[#A8E63D] transition-colors">🥟</div>
               <span class="text-gray-400 text-xs">Starters</span>
             </div>
             <div class="flex flex-col items-center min-w-[50px] sm:min-w-[60px] cursor-pointer group" onclick="filterByCategory('mains')">
@@ -742,8 +742,8 @@
   </div>
 
   <script>
-    // ⚙️ CONFIGURATION - Replace YOUR_UPI_ID with your actual UPI ID
-    const UPI_ID = "YOUR_UPI_ID@upi";  // Change this to your UPI ID (e.g., "yourname@okhdfcbank")
+    // ✅ TEKA UPI ID SETA DIA - Ab direct payment ho jayega!
+    const UPI_ID = "6386754482@pthdfc";
     
     const defaultConfig = {
       restaurant_name: 'SpiceCraft Kitchen',
@@ -1197,25 +1197,23 @@
       if (modal) modal.classList.add('open');
     }
 
-    // 💳 UPI Payment Function - Replace YOUR_UPI_ID with your actual UPI ID
+    // ✅ YE NEW UPI PAYMENT FUNCTION - DIRECT PAYMENT HO JAYEGA TEKA UPI ID SE
     function initiateUPIPayment() {
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
       const delivery = subtotal >= 499 ? 0 : 40;
       const total = subtotal + delivery;
       const orderId = document.getElementById('orderId').textContent;
 
-      // Format: upi://pay?pa=UPI_ID&pn=NAME&tr=REF_ID&tn=NOTE&am=AMOUNT&cu=INR
-      // Replace YOUR_UPI_ID with your actual UPI ID (e.g., yourname@okhdfcbank, yourgmail@okaxis, etc.)
+      // TEKA UPI ID: 6386754482@pthdfc
       const upiLink = `upi://pay?pa=${UPI_ID}&pn=SpiceCraft%20Kitchen&tr=${orderId}&tn=Order%20Payment&am=${total}&cu=INR`;
 
-      // Open UPI app
+      // UPI app open ho jayega
       window.location.href = upiLink;
 
       showToast('Opening UPI app for payment... 🔗');
 
-      // Auto-submit after 2 seconds (optional - gives user time to cancel if they want)
+      // Success animation dikhega 2 seconds baad
       setTimeout(() => {
-        // Check if order was successfully placed - for now just show success
         showSuccessAnimation();
         setTimeout(() => {
           confirmOrderAfterPayment();
@@ -1369,5 +1367,5 @@
     updateCartUI();
     selectPayment('cod');
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf4507e864959f9',t:'MTc3MTMyMTEzNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf45eddc0b495fd',t:'MTc3MTMyMTcyMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
