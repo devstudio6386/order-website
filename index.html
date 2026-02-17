@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
   <title>SpiceCraft Kitchen - Food Ordering</title>
-  <script src="/_sdk/element_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
   <style>
     * {
       font-family: 'Poppins', sans-serif;
@@ -442,6 +442,57 @@
       margin-left: -8px;
     }
 
+    .payment-option {
+      transition: all 0.2s ease;
+    }
+
+    .payment-option.selected {
+      border-color: #A8E63D !important;
+      background: rgba(168, 230, 61, 0.1) !important;
+    }
+
+    .barcode-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      backdrop-filter: blur(5px);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .barcode-modal.open {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .barcode-content {
+      background: #1A1A1A;
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      max-width: 90%;
+      border: 2px solid #A8E63D;
+      box-shadow: 0 20px 60px rgba(168, 230, 61, 0.3);
+      animation: slideUp 0.4s ease;
+    }
+
+    .barcode-content svg {
+      max-width: 100%;
+      height: auto;
+      margin: 20px 0;
+    }
+
     @media (max-width: 360px) {
       .dish-name {
         font-size: 14px;
@@ -600,6 +651,21 @@
                 class="w-full bg-[#1A1A1A] text-white rounded-xl py-3 px-4 text-xs sm:text-sm placeholder-gray-500 border border-gray-800 focus:border-[#A8E63D] transition-colors">
               <textarea id="customerAddress" placeholder="Delivery Address *" rows="2"
                 class="w-full bg-[#1A1A1A] text-white rounded-xl py-3 px-4 text-xs sm:text-sm placeholder-gray-500 border border-gray-800 focus:border-[#A8E63D] transition-colors resize-none"></textarea>
+              
+              <!-- Payment Method Section -->
+              <div class="mt-4 pt-4 border-t border-gray-800">
+                <h3 class="text-white font-semibold mb-3 text-sm">Payment Method</h3>
+                <div class="space-y-2">
+                  <button id="codBtn" onclick="selectPayment('cod')" class="payment-option w-full bg-[#1A1A1A] border-2 border-gray-700 hover:border-[#A8E63D] text-white rounded-xl py-3 px-4 text-xs sm:text-sm font-medium transition-all flex items-center justify-between">
+                    <span>💵 Cash on Delivery</span>
+                    <span id="codCheck" class="text-[#A8E63D] opacity-0 transition-opacity">✓</span>
+                  </button>
+                  <button id="payBtn" onclick="selectPayment('online')" class="payment-option w-full bg-[#1A1A1A] border-2 border-gray-700 hover:border-[#A8E63D] text-white rounded-xl py-3 px-4 text-xs sm:text-sm font-medium transition-all flex items-center justify-between">
+                    <span>💳 Pay Online</span>
+                    <span id="payCheck" class="text-[#A8E63D] opacity-0 transition-opacity">✓</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -623,7 +689,7 @@
           <div id="minOrderWarning" class="hidden text-red-400 text-xs mb-3 text-center">
             ⚠️ Minimum order amount is ₹149
           </div>
-          <button onclick="checkout()" class="whatsapp-btn w-full py-3 sm:py-4 rounded-2xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2">
+          <button id="checkoutBtn" onclick="checkout()" class="whatsapp-btn w-full py-3 sm:py-4 rounded-2xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2">
             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
             </svg>
@@ -632,6 +698,27 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Barcode Modal -->
+  <div id="barcodeModal" class="barcode-modal" onclick="closeBarcode(event)">
+    <div class="barcode-content" onclick="event.stopPropagation()">
+      <h2 class="text-white text-lg sm:text-xl font-bold mb-2">Scan to Pay</h2>
+      <p class="text-gray-400 text-xs sm:text-sm mb-4">Order ID: <span id="orderId" class="text-[#A8E63D] font-bold">SPK001</span></p>
+      <svg id="barcode"></svg>
+      <p class="text-white text-sm font-semibold mt-4">Amount: ₹<span id="barcodeAmount">0</span></p>
+      <div class="space-y-3 mt-4">
+        <button onclick="confirmOrderAfterPayment()" class="w-full bg-[#A8E63D] text-[#0D0D0D] py-3 rounded-lg font-semibold text-sm hover:bg-[#9AD835] transition-colors flex items-center justify-center gap-2">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Order on WhatsApp
+        </button>
+        <button onclick="closeBarcode()" class="w-full bg-gray-700 text-white py-2 rounded-lg font-semibold text-sm hover:bg-gray-600 transition-colors">
+          Back to Cart
+        </button>
+      </div>
     </div>
   </div>
 
@@ -661,6 +748,7 @@
     };
 
     let config = { ...defaultConfig };
+    let selectedPayment = 'cod';
 
     const menuItems = [
       { id: 1, name: 'Paneer Tikka', price: 199, oldPrice: 249, category: 'starters', image: 'https://images.unsplash.com/photo-1599510120657-0e265ceea4d1?w=400&h=300&fit=crop', rating: 4.8, calories: 285, time: '20 min', tag: 'Popular', spicy: true },
@@ -698,49 +786,6 @@
     let cart = JSON.parse(localStorage.getItem('spicecraft_cart')) || [];
     let currentCategory = 'all';
     let renderTimeout;
-
-    if (window.elementSdk) {
-      window.elementSdk.init({
-        defaultConfig,
-        onConfigChange: async (newConfig) => {
-          config = { ...defaultConfig, ...newConfig };
-          updateDisplay();
-        },
-        mapToCapabilities: (cfg) => ({
-          recolorables: [
-            {
-              get: () => cfg.background_color || defaultConfig.background_color,
-              set: (v) => { cfg.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
-            },
-            {
-              get: () => cfg.surface_color || defaultConfig.surface_color,
-              set: (v) => { cfg.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
-            },
-            {
-              get: () => cfg.text_color || defaultConfig.text_color,
-              set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
-            },
-            {
-              get: () => cfg.accent_color || defaultConfig.accent_color,
-              set: (v) => { cfg.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); }
-            },
-            {
-              get: () => cfg.secondary_accent || defaultConfig.secondary_accent,
-              set: (v) => { cfg.secondary_accent = v; window.elementSdk.setConfig({ secondary_accent: v }); }
-            }
-          ],
-          borderables: [],
-          fontEditable: undefined,
-          fontSizeable: undefined
-        }),
-        mapToEditPanelValues: (cfg) => new Map([
-          ['restaurant_name', cfg.restaurant_name || defaultConfig.restaurant_name],
-          ['timing', cfg.timing || defaultConfig.timing],
-          ['location', cfg.location || defaultConfig.location],
-          ['whatsapp_number', cfg.whatsapp_number || defaultConfig.whatsapp_number]
-        ])
-      });
-    }
 
     function updateDisplay() {
       const timingEl = document.getElementById('timingDisplay');
@@ -1042,6 +1087,48 @@
       container.appendChild(fragment);
     }
 
+    function selectPayment(method) {
+      selectedPayment = method;
+      
+      const codBtn = document.getElementById('codBtn');
+      const payBtn = document.getElementById('payBtn');
+      const codCheck = document.getElementById('codCheck');
+      const payCheck = document.getElementById('payCheck');
+      
+      if (method === 'cod') {
+        codBtn.classList.add('selected');
+        payBtn.classList.remove('selected');
+        codCheck.classList.remove('opacity-0');
+        payCheck.classList.add('opacity-0');
+      } else {
+        payBtn.classList.add('selected');
+        codBtn.classList.remove('selected');
+        payCheck.classList.remove('opacity-0');
+        codCheck.classList.add('opacity-0');
+      }
+      
+      updateCheckoutButton();
+    }
+
+    function updateCheckoutButton() {
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      if (selectedPayment === 'cod') {
+        checkoutBtn.innerHTML = `
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          <span>Order on WhatsApp</span>
+        `;
+      } else {
+        checkoutBtn.innerHTML = `
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M9 3H5a2 2 0 00-2 2v4m6-6h4a2 2 0 012 2v4m-6-6v4m6-4v4m0 0a2 2 0 012 2v4m-6 0a2 2 0 01-2 2h-4a2 2 0 01-2-2m12 0v4m-6 0v4"/>
+          </svg>
+          <span>View Barcode</span>
+        `;
+      }
+    }
+
     function openCart() {
       renderCartItems();
       const backdrop = document.getElementById('cartBackdrop');
@@ -1079,6 +1166,89 @@
       }
     }
 
+    function showBarcode() {
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const delivery = subtotal >= 499 ? 0 : 40;
+      const total = subtotal + delivery;
+      const orderId = 'SPK' + String(Math.floor(Math.random() * 10000)).padStart(5, '0');
+      
+      document.getElementById('orderId').textContent = orderId;
+      document.getElementById('barcodeAmount').textContent = total;
+      
+      JsBarcode("#barcode", orderId, {
+        format: "CODE128",
+        width: 2,
+        height: 100,
+        displayValue: false
+      });
+      
+      const modal = document.getElementById('barcodeModal');
+      if (modal) modal.classList.add('open');
+    }
+
+    function confirmOrderAfterPayment() {
+      const nameInput = document.getElementById('customerName');
+      const phoneInput = document.getElementById('customerPhone');
+      const addressInput = document.getElementById('customerAddress');
+
+      const name = nameInput?.value?.trim() || '';
+      const phone = phoneInput?.value?.trim() || '';
+      const address = addressInput?.value?.trim() || '';
+
+      if (!name || !phone || !address) {
+        showToast('Please fill all details! 📝');
+        return;
+      }
+
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const delivery = subtotal >= 499 ? 0 : 40;
+      const total = subtotal + delivery;
+
+      let message = `Hello, I want to order:\n\n`;
+
+      cart.forEach(item => {
+        message += `${item.qty}x ${item.name} – ₹${item.price}\n`;
+      });
+
+      message += `\n━━━━━━━━━━━━━━\n`;
+      message += `Total: ₹${total}\n`;
+      message += `Name: ${name}\n`;
+      message += `Address: ${address}\n`;
+      message += `Phone: ${phone}\n`;
+      message += `Payment: Online (Payment Done)\n`;
+      message += `Order ID: ${document.getElementById('orderId').textContent}\n`;
+      message += `━━━━━━━━━━━━━━\n\n`;
+      message += `Thank you! 🙏`;
+
+      const encoded = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/916386754482?text=${encoded}`;
+
+      showSuccessAnimation();
+
+      setTimeout(() => {
+        window.open(whatsappUrl, '_blank');
+
+        cart = [];
+        saveCart();
+        updateCartUI();
+        closeCart();
+        closeBarcode();
+        filterByCategory(currentCategory);
+
+        if (nameInput) nameInput.value = '';
+        if (phoneInput) phoneInput.value = '';
+        if (addressInput) addressInput.value = '';
+
+        showToast('Order on WhatsApp! 🎉');
+      }, 800);
+    }
+
+    function closeBarcode(event) {
+      if (event && event.target.id !== 'barcodeModal') return;
+      const modal = document.getElementById('barcodeModal');
+      if (modal) modal.classList.remove('open');
+    }
+
     function checkout() {
       const nameInput = document.getElementById('customerName');
       const phoneInput = document.getElementById('customerPhone');
@@ -1105,6 +1275,11 @@
         return;
       }
 
+      if (selectedPayment === 'online') {
+        showBarcode();
+        return;
+      }
+
       const delivery = subtotal >= 499 ? 0 : 40;
       const total = subtotal + delivery;
 
@@ -1119,6 +1294,7 @@
       message += `Name: ${name}\n`;
       message += `Address: ${address}\n`;
       message += `Phone: ${phone}\n`;
+      message += `Payment: Cash on Delivery\n`;
       message += `━━━━━━━━━━━━━━\n\n`;
       message += `Thank you! 🙏`;
 
@@ -1154,6 +1330,7 @@
     updateDisplay();
     filterByCategory('all');
     updateCartUI();
+    selectPayment('cod');
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf3d70c20d159f9',t:'MTc3MTMxNjE1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf3fac0376c95fd',t:'MTc3MTMxNzYyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
