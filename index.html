@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
   <style>
     * {
       font-family: 'Poppins', sans-serif;
@@ -442,120 +441,6 @@
       margin-left: -8px;
     }
 
-    .payment-option {
-      transition: all 0.2s ease;
-    }
-
-    .payment-option.selected {
-      border-color: #A8E63D !important;
-      background: rgba(168, 230, 61, 0.1) !important;
-    }
-
-    .barcode-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.9);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      backdrop-filter: blur(5px);
-      animation: fadeIn 0.3s ease;
-    }
-
-    .barcode-modal.open {
-      display: flex;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    .barcode-content {
-      background: #1A1A1A;
-      border-radius: 20px;
-      padding: 24px;
-      text-align: center;
-      max-width: 90%;
-      border: 2px solid #A8E63D;
-      box-shadow: 0 20px 60px rgba(168, 230, 61, 0.3);
-      animation: slideUp 0.4s ease;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-
-    .barcode-content svg {
-      max-width: 100%;
-      height: auto;
-      margin: 20px 0;
-    }
-
-    .payment-processing {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.95);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 3000;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .payment-processing.show {
-      display: flex;
-    }
-
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(168, 230, 61, 0.2);
-      border-top-color: #A8E63D;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .size-selector {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-      flex-wrap: wrap;
-    }
-
-    .size-option {
-      padding: 6px 12px;
-      border-radius: 20px;
-      border: 2px solid #333;
-      background: #1A1A1A;
-      color: #999;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .size-option:hover {
-      border-color: #A8E63D;
-      color: #A8E63D;
-    }
-
-    .size-option.selected {
-      background: #A8E63D;
-      color: #0D0D0D;
-      border-color: #A8E63D;
-    }
-
     .size-modal {
       position: fixed;
       inset: 0;
@@ -675,7 +560,7 @@
             <div class="absolute inset-0 flex items-center justify-between p-4 sm:p-6">
               <div>
                 <p class="text-gray-400 text-xs sm:text-sm mb-1" id="timingDisplay">10 AM – 11 PM</p>
-                <h1 class="text-white text-lg sm:text-2xl font-bold leading-tight" id="greetingDisplay"> ZIXY BITE<br>RESTURANT 🍽</h1>
+                <h1 class="text-white text-lg sm:text-2xl font-bold leading-tight" id="greetingDisplay">Let's Eat<br>Healthy Food 🍽</h1>
               </div>
               <div class="text-4xl sm:text-6xl">🍲</div>
             </div>
@@ -811,14 +696,10 @@
               <div class="mt-4 pt-4 border-t border-gray-800">
                 <h3 class="text-white font-semibold mb-3 text-sm">Payment Method</h3>
                 <div class="space-y-2">
-                  <button id="codBtn" onclick="selectPayment('cod')" class="payment-option w-full bg-[#1A1A1A] border-2 border-gray-700 hover:border-[#A8E63D] text-white rounded-xl py-3 px-4 text-xs sm:text-sm font-medium transition-all flex items-center justify-between">
+                  <div class="payment-option w-full bg-[#1A1A1A] border-2 border-[#A8E63D] text-white rounded-xl py-3 px-4 text-xs sm:text-sm font-medium flex items-center justify-between">
                     <span>💵 Cash on Delivery</span>
-                    <span id="codCheck" class="text-[#A8E63D] opacity-0 transition-opacity">✓</span>
-                  </button>
-                  <button id="payBtn" onclick="selectPayment('online')" class="payment-option w-full bg-[#1A1A1A] border-2 border-gray-700 hover:border-[#A8E63D] text-white rounded-xl py-3 px-4 text-xs sm:text-sm font-medium transition-all flex items-center justify-between">
-                    <span>💳 Pay Online (UPI)</span>
-                    <span id="payCheck" class="text-[#A8E63D] opacity-0 transition-opacity">✓</span>
-                  </button>
+                    <span class="text-[#A8E63D]">✓</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -865,34 +746,6 @@
     </div>
   </div>
 
-  <!-- Barcode Modal -->
-  <div id="barcodeModal" class="barcode-modal" onclick="closeBarcode(event)">
-    <div class="barcode-content" onclick="event.stopPropagation()">
-      <h2 class="text-white text-lg sm:text-xl font-bold mb-2">Scan to Pay</h2>
-      <p class="text-gray-400 text-xs sm:text-sm mb-4">Order ID: <span id="orderId" class="text-[#A8E63D] font-bold">SPK001</span></p>
-      <svg id="barcode"></svg>
-      <p class="text-white text-sm font-semibold mt-4">Amount: ₹<span id="barcodeAmount">0</span></p>
-      <div class="space-y-3 mt-4">
-        <button onclick="initiateUPIPayment()" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-lg font-semibold text-sm hover:from-orange-600 hover:to-orange-700 transition-colors flex items-center justify-center gap-2">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-          </svg>
-          💳 Pay via UPI
-        </button>
-        <button onclick="closeBarcode()" class="w-full bg-gray-700 text-white py-2 rounded-lg font-semibold text-sm hover:bg-gray-600 transition-colors">
-          Back to Cart
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Payment Processing -->
-  <div id="paymentProcessing" class="payment-processing">
-    <div class="spinner"></div>
-    <p class="text-white text-sm font-medium">Processing payment...</p>
-    <p class="text-gray-400 text-xs">Opening UPI app...</p>
-  </div>
-
   <!-- Toast Container -->
   <div id="toastContainer" class="fixed bottom-20 sm:bottom-24 left-1/2 -translate-x-1/2 z-[100] space-y-2 pointer-events-none px-4"></div>
 
@@ -905,8 +758,11 @@
   </div>
 
   <script>
-    const UPI_ID = "6386754482@pthdfc";
-    
+    const SIZE_MULTIPLIERS = {
+      'pizza': { '7 inch': 1.0, '8 inch': 1.3, '10 inch': 1.6 },
+      'noodles': { 'Half Plate': 1.0, 'Full Plate': 1.5 }
+    };
+
     const defaultConfig = {
       restaurant_name: 'SpiceCraft Kitchen',
       greeting_text: 'Let\'s Eat Healthy Food',
@@ -921,14 +777,8 @@
     };
 
     let config = { ...defaultConfig };
-    let selectedPayment = 'cod';
     let currentOrderData = null;
     let pendingSizeSelection = null;
-
-    const SIZE_MULTIPLIERS = {
-      'pizza': { '7 inch': 1.0, '8 inch': 1.3, '10 inch': 1.6 },
-      'noodles': { 'Half Plate': 1.0, 'Full Plate': 1.5 }
-    };
 
     function getPriceForSize(basePrice, category, size) {
       if (!size) return basePrice;
@@ -1198,7 +1048,7 @@
       saveCart();
       updateCartUI();
       const sizeText = size ? ` (${size})` : '';
-      showToast(`${item.name}${sizeText} added! 🎉`);
+      showToast(`${item.name}${sizeText} added! ✅`);
       filterByCategory(currentCategory);
     }
 
@@ -1341,30 +1191,6 @@
       container.appendChild(fragment);
     }
 
-    function selectPayment(method) {
-      selectedPayment = method;
-      
-      const codBtn = document.getElementById('codBtn');
-      const payBtn = document.getElementById('payBtn');
-      const codCheck = document.getElementById('codCheck');
-      const payCheck = document.getElementById('payCheck');
-      const checkoutBtnText = document.getElementById('checkoutBtnText');
-      
-      if (method === 'cod') {
-        codBtn.classList.add('selected');
-        payBtn.classList.remove('selected');
-        codCheck.classList.remove('opacity-0');
-        payCheck.classList.add('opacity-0');
-        if (checkoutBtnText) checkoutBtnText.textContent = 'Order on WhatsApp';
-      } else {
-        payBtn.classList.add('selected');
-        codBtn.classList.remove('selected');
-        payCheck.classList.remove('opacity-0');
-        codCheck.classList.add('opacity-0');
-        if (checkoutBtnText) checkoutBtnText.textContent = 'Pay Online';
-      }
-    }
-
     function openCart() {
       renderCartItems();
       const backdrop = document.getElementById('cartBackdrop');
@@ -1432,7 +1258,7 @@
       if (addressInput) addressInput.value = savedAddress;
     }
 
-    function buildOrderMessage(paymentStatus = 'cod') {
+    function buildOrderMessage() {
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
       const delivery = subtotal >= 499 ? 0 : 40;
       const total = subtotal + delivery;
@@ -1458,93 +1284,11 @@
       message += `Phone: ${currentOrderData?.phone || 'N/A'}\n`;
       message += `Address: ${currentOrderData?.address || 'N/A'}\n`;
 
-      message += `\n💳 *PAYMENT STATUS*\n`;
+      message += `\n💵 *PAYMENT*\n`;
       message += `━━━━━━━━━━━━━━\n`;
-      message += paymentStatus === 'paid' ? `✅ Online Payment Done\n` : `💵 Cash on Delivery\n`;
-
-      message += `\n${paymentStatus === 'paid' ? '✅ PAYMENT CONFIRMED' : 'Awaiting COD Payment'}`;
+      message += `Cash on Delivery`;
 
       return message;
-    }
-
-    function showBarcode() {
-      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      const delivery = subtotal >= 499 ? 0 : 40;
-      const total = subtotal + delivery;
-      const orderId = 'SPK' + String(Math.floor(Math.random() * 10000)).padStart(5, '0');
-      
-      document.getElementById('orderId').textContent = orderId;
-      document.getElementById('barcodeAmount').textContent = total;
-      
-      JsBarcode("#barcode", orderId, {
-        format: "CODE128",
-        width: 2,
-        height: 100,
-        displayValue: false
-      });
-      
-      const modal = document.getElementById('barcodeModal');
-      if (modal) modal.classList.add('open');
-    }
-
-    function initiateUPIPayment() {
-      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      const delivery = subtotal >= 499 ? 0 : 40;
-      const total = subtotal + delivery;
-
-      saveCustomerData();
-
-      const processing = document.getElementById('paymentProcessing');
-      if (processing) processing.classList.add('show');
-
-      const upiLink = `upi://pay?pa=${UPI_ID}&pn=SpiceCraft%20Kitchen&tn=Order%20Payment&am=${total}&cu=INR`;
-      
-      // Open UPI app
-      window.location.href = upiLink;
-
-      showToast('Opening payment app... 💳');
-
-      // Wait for user to complete/cancel payment, then send WhatsApp
-      setTimeout(() => {
-        if (processing) processing.classList.remove('show');
-        
-        showSuccessAnimation();
-
-        // Build message with paid status
-        const message = buildOrderMessage('paid');
-        const encoded = encodeURIComponent(message);
-
-        setTimeout(() => {
-          // Auto-open WhatsApp and send message
-          window.location.href = `https://wa.me/916386754482?text=${encoded}`;
-
-          // Clear cart after a delay
-          setTimeout(() => {
-            cart = [];
-            saveCart();
-            updateCartUI();
-            closeCart();
-            closeBarcode();
-            filterByCategory(currentCategory);
-
-            const nameInput = document.getElementById('customerName');
-            const phoneInput = document.getElementById('customerPhone');
-            const addressInput = document.getElementById('customerAddress');
-
-            if (nameInput) nameInput.value = '';
-            if (phoneInput) phoneInput.value = '';
-            if (addressInput) addressInput.value = '';
-
-            showToast('Order sent successfully! 🎉');
-          }, 1000);
-        }, 800);
-      }, 2500);
-    }
-
-    function closeBarcode(event) {
-      if (event && event.target.id !== 'barcodeModal') return;
-      const modal = document.getElementById('barcodeModal');
-      if (modal) modal.classList.remove('open');
     }
 
     function checkout() {
@@ -1567,17 +1311,10 @@
       }
 
       saveCustomerData();
-
-      if (selectedPayment === 'online') {
-        showBarcode();
-        return;
-      }
-
-      // COD - Send WhatsApp directly
       showSuccessAnimation();
 
       setTimeout(() => {
-        const message = buildOrderMessage('cod');
+        const message = buildOrderMessage();
         const encoded = encodeURIComponent(message);
         
         // Auto-open WhatsApp and send
@@ -1613,8 +1350,7 @@
     updateDisplay();
     filterByCategory('all');
     updateCartUI();
-    selectPayment('cod');
     loadCustomerData();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf53cb2b3106ed7',t:'MTc3MTMzMDgwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf5502d671795fd',t:'MTc3MTMzMTYwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
