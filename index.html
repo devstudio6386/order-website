@@ -706,7 +706,9 @@
     <div class="barcode-content" onclick="event.stopPropagation()">
       <h2 class="text-white text-lg sm:text-xl font-bold mb-2">Scan to Pay</h2>
       <p class="text-gray-400 text-xs sm:text-sm mb-4">Order ID: <span id="orderId" class="text-[#A8E63D] font-bold">SPK001</span></p>
-      <svg id="barcode"></svg>
+      <img src="https://ik.imagekit.io/hyi9kn2fq/Screenshot_2026-02-17-14-17-02-79_49b96b5fbae0d12a18edc4a3afe0dfd9.jpg"
+     alt="Barcode"
+     class="w-full rounded-md" />
       <p class="text-white text-sm font-semibold mt-4">Amount: ₹<span id="barcodeAmount">0</span></p>
       <div class="space-y-3 mt-4">
         <button onclick="confirmOrderAfterPayment()" class="w-full bg-[#A8E63D] text-[#0D0D0D] py-3 rounded-lg font-semibold text-sm hover:bg-[#9AD835] transition-colors flex items-center justify-center gap-2">
@@ -1175,13 +1177,14 @@
       document.getElementById('orderId').textContent = orderId;
       document.getElementById('barcodeAmount').textContent = total;
       
+      /*
       JsBarcode("#barcode", orderId, {
         format: "CODE128",
         width: 2,
         height: 100,
         displayValue: false
       });
-      
+      */
       const modal = document.getElementById('barcodeModal');
       if (modal) modal.classList.add('open');
     }
