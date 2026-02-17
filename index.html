@@ -495,6 +495,37 @@
       margin: 20px 0;
     }
 
+    .payment-processing {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .payment-processing.show {
+      display: flex;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(168, 230, 61, 0.2);
+      border-top-color: #A8E63D;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
     @media (max-width: 360px) {
       .dish-name {
         font-size: 14px;
@@ -522,7 +553,7 @@
         <!-- Offer Banner -->
         <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 py-2 overflow-hidden mt-0">
           <div class="marquee-text whitespace-nowrap text-white text-xs sm:text-sm font-medium">
-            🔥 FLAT 20% OFF on orders above ₹599! Use code: SPICE20 | 🚚 FREE Delivery above ₹499 | ✨ New items added! Try our Chef's Special Biryani!
+            🔥 FLAT 20% OFF on orders above ₹599! Use code: SPICE20 | 🚚 FREE Delivery above ₹499 | 🆕 New items added! Try our Chef's Special Biryani!
           </div>
         </div>
 
@@ -532,7 +563,7 @@
             <div class="absolute inset-0 flex items-center justify-between p-4 sm:p-6">
               <div>
                 <p class="text-gray-400 text-xs sm:text-sm mb-1" id="timingDisplay">10 AM – 11 PM</p>
-                <h1 class="text-white text-lg sm:text-2xl font-bold leading-tight" id="greetingDisplay">ZIXY BITE<br>RESTURANT 🍽</h1>
+                <h1 class="text-white text-lg sm:text-2xl font-bold leading-tight" id="greetingDisplay">Let's Eat<br>Healthy Food 🍽</h1>
               </div>
               <div class="text-4xl sm:text-6xl">🍲</div>
             </div>
@@ -717,17 +748,18 @@
           </svg>
           💳 Pay Now via UPI
         </button>
-        <button onclick="confirmOrderAfterPayment()" class="w-full bg-[#A8E63D] text-[#0D0D0D] py-3 rounded-lg font-semibold text-sm hover:bg-[#9AD835] transition-colors flex items-center justify-center gap-2">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-          </svg>
-          Order on WhatsApp
-        </button>
         <button onclick="closeBarcode()" class="w-full bg-gray-700 text-white py-2 rounded-lg font-semibold text-sm hover:bg-gray-600 transition-colors">
           Back to Cart
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- Payment Processing -->
+  <div id="paymentProcessing" class="payment-processing">
+    <div class="spinner"></div>
+    <p class="text-white text-sm font-medium">Processing payment...</p>
+    <p class="text-gray-400 text-xs">Please don't close this window</p>
   </div>
 
   <!-- Toast Container -->
@@ -742,7 +774,6 @@
   </div>
 
   <script>
-    // ✅ TEKA UPI ID SETA DIA - Ab direct payment ho jayega!
     const UPI_ID = "6386754482@pthdfc";
     
     const defaultConfig = {
@@ -760,6 +791,7 @@
 
     let config = { ...defaultConfig };
     let selectedPayment = 'cod';
+    let currentOrderData = null;
 
     const menuItems = [
       { id: 1, name: 'Paneer Tikka', price: 199, oldPrice: 249, category: 'starters', image: 'https://images.unsplash.com/photo-1599510120657-0e265ceea4d1?w=400&h=300&fit=crop', rating: 4.8, calories: 285, time: '20 min', tag: 'Popular', spicy: true },
@@ -1075,7 +1107,7 @@
         const itemDiv = document.createElement('div');
         itemDiv.className = 'bg-[#1A1A1A] rounded-2xl p-3 flex items-center gap-3';
         itemDiv.innerHTML = `
-          <img src="${menuItem?.image}" alt="${item.name}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0">
+          <img src="${menuItem?.image}" alt="${item.name}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0" onerror="this.style.background='linear-gradient(135deg, #A8E63D 0%, #7dc621 100%)'">
           <div class="flex-1 min-w-0">
             <h4 class="text-white text-xs sm:text-sm font-medium truncate">${item.name}</h4>
             <p class="text-[#A8E63D] text-xs sm:text-sm font-semibold">₹${item.price * item.qty}</p>
@@ -1135,7 +1167,7 @@
           <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
             <path d="M9 3H5a2 2 0 00-2 2v4m6-6h4a2 2 0 012 2v4m-6-6v4m6-4v4m0 0a2 2 0 012 2v4m-6 0a2 2 0 01-2 2h-4a2 2 0 01-2-2m12 0v4m-6 0v4"/>
           </svg>
-          <span>View Barcode</span>
+          <span>Pay Now</span>
         `;
       }
     }
@@ -1177,6 +1209,36 @@
       }
     }
 
+    function saveCustomerData() {
+      const nameInput = document.getElementById('customerName');
+      const phoneInput = document.getElementById('customerPhone');
+      const addressInput = document.getElementById('customerAddress');
+
+      const name = nameInput?.value?.trim() || '';
+      const phone = phoneInput?.value?.trim() || '';
+      const address = addressInput?.value?.trim() || '';
+
+      if (name) localStorage.setItem('spicecraft_customer_name', name);
+      if (phone) localStorage.setItem('spicecraft_customer_phone', phone);
+      if (address) localStorage.setItem('spicecraft_customer_address', address);
+
+      currentOrderData = { name, phone, address };
+    }
+
+    function loadCustomerData() {
+      const nameInput = document.getElementById('customerName');
+      const phoneInput = document.getElementById('customerPhone');
+      const addressInput = document.getElementById('customerAddress');
+
+      const savedName = localStorage.getItem('spicecraft_customer_name') || '';
+      const savedPhone = localStorage.getItem('spicecraft_customer_phone') || '';
+      const savedAddress = localStorage.getItem('spicecraft_customer_address') || '';
+
+      if (nameInput) nameInput.value = savedName;
+      if (phoneInput) phoneInput.value = savedPhone;
+      if (addressInput) addressAddress = savedAddress;
+    }
+
     function showBarcode() {
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
       const delivery = subtotal >= 499 ? 0 : 40;
@@ -1197,91 +1259,100 @@
       if (modal) modal.classList.add('open');
     }
 
-    // ✅ YE NEW UPI PAYMENT FUNCTION - DIRECT PAYMENT HO JAYEGA TEKA UPI ID SE
     function initiateUPIPayment() {
       const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
       const delivery = subtotal >= 499 ? 0 : 40;
       const total = subtotal + delivery;
       const orderId = document.getElementById('orderId').textContent;
 
-      // TEKA UPI ID: 6386754482@pthdfc
-      const upiLink = `upi://pay?pa=${UPI_ID}&pn=SpiceCraft%20Kitchen&tr=${orderId}&tn=Order%20Payment&am=${total}&cu=INR`;
+      // Save customer data before payment
+      saveCustomerData();
 
-      // UPI app open ho jayega
+      const processing = document.getElementById('paymentProcessing');
+      if (processing) processing.classList.add('show');
+
+      const upiLink = `upi://pay?pa=${UPI_ID}&pn=SpiceCraft%20Kitchen&tr=${orderId}&tn=Order%20Payment&am=${total}&cu=INR`;
+      
       window.location.href = upiLink;
 
-      showToast('Opening UPI app for payment... 🔗');
+      showToast('Opening UPI app... 💳');
 
-      // Success animation dikhega 2 seconds baad
+      // Simulate payment completion after 3 seconds
       setTimeout(() => {
+        if (processing) processing.classList.remove('show');
+        
         showSuccessAnimation();
+
+        // After success animation, send WhatsApp order
         setTimeout(() => {
-          confirmOrderAfterPayment();
+          sendWhatsAppOrder('paid');
         }, 1200);
-      }, 2000);
-    }
-
-    function confirmOrderAfterPayment() {
-      const nameInput = document.getElementById('customerName');
-      const phoneInput = document.getElementById('customerPhone');
-      const addressInput = document.getElementById('customerAddress');
-
-      const name = nameInput?.value?.trim() || '';
-      const phone = phoneInput?.value?.trim() || '';
-      const address = addressInput?.value?.trim() || '';
-
-      if (!name || !phone || !address) {
-        showToast('Please fill all details! 📝');
-        return;
-      }
-
-      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      const delivery = subtotal >= 499 ? 0 : 40;
-      const total = subtotal + delivery;
-
-      let message = `Hello, I want to order:\n\n`;
-
-      cart.forEach(item => {
-        message += `${item.qty}x ${item.name} – ₹${item.price}\n`;
-      });
-
-      message += `\n━━━━━━━━━━━━━━\n`;
-      message += `Total: ₹${total}\n`;
-      message += `Name: ${name}\n`;
-      message += `Address: ${address}\n`;
-      message += `Phone: ${phone}\n`;
-      message += `Payment: Online (Payment Done)\n`;
-      message += `Order ID: ${document.getElementById('orderId').textContent}\n`;
-      message += `━━━━━━━━━━━━━━\n\n`;
-      message += `Thank you! 🙏`;
-
-      const encoded = encodeURIComponent(message);
-      const whatsappUrl = `https://wa.me/916386754482?text=${encoded}`;
-
-      showSuccessAnimation();
-
-      setTimeout(() => {
-        window.open(whatsappUrl, '_blank');
-
-        cart = [];
-        saveCart();
-        updateCartUI();
-        closeCart();
-        closeBarcode();
-        filterByCategory(currentCategory);
-
-        if (nameInput) nameInput.value = '';
-        if (phoneInput) phoneInput.value = '';
-        if (addressInput) addressInput.value = '';
-
-        showToast('Order on WhatsApp! 🎉');
-      }, 800);
+      }, 3000);
     }
 
     function closeBarcode(event) {
       if (event && event.target.id !== 'barcodeModal') return;
       const modal = document.getElementById('barcodeModal');
       if (modal) modal.classList.remove('open');
+    }
+
+    function sendWhatsAppOrder(paymentMethod) {
+      if (!currentOrderData) {
+        saveCustomerData();
+      }
+
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const delivery = subtotal >= 499 ? 0 : 40;
+      const total = subtotal + delivery;
+
+      let message = `🍽️ *NEW ORDER FROM SPICECRAFT* 🍽️\n\n`;
+      message += `📦 *ORDER DETAILS*\n`;
+      message += `━━━━━━━━━━━━━━\n`;
+
+      cart.forEach(item => {
+        message += `${item.qty}x ${item.name} – ₹${item.price}\n`;
+      });
+
+      message += `\n💰 *PRICING*\n`;
+      message += `━━━━━━━━━━━━━━\n`;
+      message += `Subtotal: ₹${subtotal}\n`;
+      message += `Delivery: ${delivery === 0 ? 'FREE 🎉' : '₹' + delivery}\n`;
+      message += `Total: ₹${total}\n`;
+
+      message += `\n👤 *CUSTOMER INFO*\n`;
+      message += `━━━━━━━━━━━━━━\n`;
+      message += `Name: ${currentOrderData?.name || 'N/A'}\n`;
+      message += `Phone: ${currentOrderData?.phone || 'N/A'}\n`;
+      message += `Address: ${currentOrderData?.address || 'N/A'}\n`;
+
+      message += `\n💳 *PAYMENT STATUS*\n`;
+      message += `━━━━━━━━━━━━━━\n`;
+      message += paymentMethod === 'paid' ? `✅ Online Payment Done\n` : `💵 Cash on Delivery\n`;
+
+      message += `\n${paymentMethod === 'paid' ? '✅ PAYMENT CONFIRMED' : 'Awaiting COD Payment'}`;
+
+      const encoded = encodeURIComponent(message);
+      const whatsappUrl = `https://wa.me/916386754482?text=${encoded}`;
+
+      window.open(whatsappUrl, '_blank');
+
+      // Clear cart and form
+      cart = [];
+      saveCart();
+      updateCartUI();
+      closeCart();
+      closeBarcode();
+      filterByCategory(currentCategory);
+
+      const nameInput = document.getElementById('customerName');
+      const phoneInput = document.getElementById('customerPhone');
+      const addressInput = document.getElementById('customerAddress');
+
+      if (nameInput) nameInput.value = '';
+      if (phoneInput) phoneInput.value = '';
+      if (addressInput) addressInput.value = '';
+
+      showToast(paymentMethod === 'paid' ? 'Order placed! 🎉' : 'Order on WhatsApp! 🎉');
     }
 
     function checkout() {
@@ -1315,43 +1386,12 @@
         return;
       }
 
-      const delivery = subtotal >= 499 ? 0 : 40;
-      const total = subtotal + delivery;
-
-      let message = `Hello, I want to order:\n\n`;
-
-      cart.forEach(item => {
-        message += `${item.qty}x ${item.name} – ₹${item.price}\n`;
-      });
-
-      message += `\n━━━━━━━━━━━━━━\n`;
-      message += `Total: ₹${total}\n`;
-      message += `Name: ${name}\n`;
-      message += `Address: ${address}\n`;
-      message += `Phone: ${phone}\n`;
-      message += `Payment: Cash on Delivery\n`;
-      message += `━━━━━━━━━━━━━━\n\n`;
-      message += `Thank you! 🙏`;
-
-      const encoded = encodeURIComponent(message);
-      const whatsappUrl = `https://wa.me/916386754482?text=${encoded}`;
-
+      // For COD
+      saveCustomerData();
       showSuccessAnimation();
 
       setTimeout(() => {
-        window.open(whatsappUrl, '_blank');
-
-        cart = [];
-        saveCart();
-        updateCartUI();
-        closeCart();
-        filterByCategory(currentCategory);
-
-        if (nameInput) nameInput.value = '';
-        if (phoneInput) phoneInput.value = '';
-        if (addressInput) addressInput.value = '';
-
-        showToast('Order on WhatsApp! 🎉');
+        sendWhatsAppOrder('cod');
       }, 800);
     }
 
@@ -1366,6 +1406,7 @@
     filterByCategory('all');
     updateCartUI();
     selectPayment('cod');
+    loadCustomerData();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf45eddc0b495fd',t:'MTc3MTMyMTcyMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf47916522095fd',t:'MTc3MTMyMjc5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
