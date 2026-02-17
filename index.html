@@ -306,7 +306,7 @@
       text-align: center;
     }
 
-    input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
       outline: none;
     }
 
@@ -526,6 +526,118 @@
       }
     }
 
+    .size-selector {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .size-option {
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 2px solid #333;
+      background: #1A1A1A;
+      color: #999;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .size-option:hover {
+      border-color: #A8E63D;
+      color: #A8E63D;
+    }
+
+    .size-option.selected {
+      background: #A8E63D;
+      color: #0D0D0D;
+      border-color: #A8E63D;
+    }
+
+    .size-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      backdrop-filter: blur(5px);
+      padding: 20px;
+    }
+
+    .size-modal.open {
+      display: flex;
+    }
+
+    .size-modal-content {
+      background: #1A1A1A;
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 300px;
+      border: 2px solid #A8E63D;
+      box-shadow: 0 20px 60px rgba(168, 230, 61, 0.3);
+      animation: slideUp 0.4s ease;
+      text-align: center;
+    }
+
+    .size-modal-content h3 {
+      color: white;
+      margin-bottom: 16px;
+      font-size: 18px;
+    }
+
+    .size-options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .size-btn {
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid #333;
+      background: #0D0D0D;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .size-btn:hover {
+      border-color: #A8E63D;
+      background: rgba(168, 230, 61, 0.1);
+    }
+
+    .size-modal-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .size-modal-buttons button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .cancel-btn {
+      background: #333;
+      color: white;
+    }
+
+    .confirm-btn {
+      background: #A8E63D;
+      color: #0D0D0D;
+    }
+
     @media (max-width: 360px) {
       .dish-name {
         font-size: 14px;
@@ -563,7 +675,7 @@
             <div class="absolute inset-0 flex items-center justify-between p-4 sm:p-6">
               <div>
                 <p class="text-gray-400 text-xs sm:text-sm mb-1" id="timingDisplay">10 AM – 11 PM</p>
-                <h1 class="text-white text-lg sm:text-2xl font-bold leading-tight" id="greetingDisplay">Let's Eat<br>Healthy Food 🍽</h1>
+                <h1 class="text-white text-lg sm:text-2xl font-bold leading-tight" id="greetingDisplay"> ZIXY BITE<br>RESTURANT 🍽</h1>
               </div>
               <div class="text-4xl sm:text-6xl">🍲</div>
             </div>
@@ -600,6 +712,14 @@
               <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#1A1A1A] flex items-center justify-center text-xl sm:text-2xl mb-1 group-hover:bg-[#A8E63D] transition-colors">🫓</div>
               <span class="text-gray-400 text-xs">Breads</span>
             </div>
+            <div class="flex flex-col items-center min-w-[50px] sm:min-w-[60px] cursor-pointer group" onclick="filterByCategory('pizza')">
+              <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#1A1A1A] flex items-center justify-center text-xl sm:text-2xl mb-1 group-hover:bg-[#A8E63D] transition-colors">🍕</div>
+              <span class="text-gray-400 text-xs">Pizza</span>
+            </div>
+            <div class="flex flex-col items-center min-w-[50px] sm:min-w-[60px] cursor-pointer group" onclick="filterByCategory('noodles')">
+              <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#1A1A1A] flex items-center justify-center text-xl sm:text-2xl mb-1 group-hover:bg-[#A8E63D] transition-colors">🍜</div>
+              <span class="text-gray-400 text-xs">Noodles</span>
+            </div>
             <div class="flex flex-col items-center min-w-[50px] sm:min-w-[60px] cursor-pointer group" onclick="filterByCategory('desserts')">
               <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#1A1A1A] flex items-center justify-center text-xl sm:text-2xl mb-1 group-hover:bg-[#A8E63D] transition-colors">🍨</div>
               <span class="text-gray-400 text-xs">Desserts</span>
@@ -617,6 +737,8 @@
             <button onclick="filterByCategory('mains')" class="category-pill px-4 py-2 sm:px-5 sm:py-2 rounded-full bg-[#1A1A1A] text-gray-400 text-xs sm:text-sm font-medium whitespace-nowrap">Mains</button>
             <button onclick="filterByCategory('biryani')" class="category-pill px-4 py-2 sm:px-5 sm:py-2 rounded-full bg-[#1A1A1A] text-gray-400 text-xs sm:text-sm font-medium whitespace-nowrap">Biryani</button>
             <button onclick="filterByCategory('breads')" class="category-pill px-4 py-2 sm:px-5 sm:py-2 rounded-full bg-[#1A1A1A] text-gray-400 text-xs sm:text-sm font-medium whitespace-nowrap">Breads</button>
+            <button onclick="filterByCategory('pizza')" class="category-pill px-4 py-2 sm:px-5 sm:py-2 rounded-full bg-[#1A1A1A] text-gray-400 text-xs sm:text-sm font-medium whitespace-nowrap">Pizza</button>
+            <button onclick="filterByCategory('noodles')" class="category-pill px-4 py-2 sm:px-5 sm:py-2 rounded-full bg-[#1A1A1A] text-gray-400 text-xs sm:text-sm font-medium whitespace-nowrap">Noodles</button>
             <button onclick="filterByCategory('desserts')" class="category-pill px-4 py-2 sm:px-5 sm:py-2 rounded-full bg-[#1A1A1A] text-gray-400 text-xs sm:text-sm font-medium whitespace-nowrap">Desserts</button>
             <button onclick="filterByCategory('drinks')" class="category-pill px-4 py-2 sm:px-5 sm:py-2 rounded-full bg-[#1A1A1A] text-gray-400 text-xs sm:text-sm font-medium whitespace-nowrap">Drinks</button>
           </div>
@@ -719,9 +841,6 @@
               <span>₹<span id="grandTotal">0</span></span>
             </div>
           </div>
-          <div id="minOrderWarning" class="hidden text-red-400 text-xs mb-3 text-center">
-            ⚠️ Minimum order amount is ₹149
-          </div>
           <button id="checkoutBtn" onclick="checkout()" class="whatsapp-btn w-full py-3 sm:py-4 rounded-2xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2">
             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
@@ -731,6 +850,18 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Size Selection Modal -->
+  <div id="sizeModal" class="size-modal" onclick="closeSizeModal(event)">
+    <div class="size-modal-content" onclick="event.stopPropagation()">
+      <h3 id="sizeModalTitle">Select Size</h3>
+      <div id="sizeOptionsContainer" class="size-options-grid"></div>
+      <div class="size-modal-buttons">
+        <button class="cancel-btn" onclick="closeSizeModal()">Cancel</button>
+        <button class="confirm-btn" onclick="confirmSize()">Add to Cart</button>
+      </div>
     </div>
   </div>
 
@@ -792,6 +923,21 @@
     let config = { ...defaultConfig };
     let selectedPayment = 'cod';
     let currentOrderData = null;
+    let pendingSizeSelection = null;
+
+    const SIZE_MULTIPLIERS = {
+      'pizza': { '7 inch': 1.0, '8 inch': 1.3, '10 inch': 1.6 },
+      'noodles': { 'Half Plate': 1.0, 'Full Plate': 1.5 }
+    };
+
+    function getPriceForSize(basePrice, category, size) {
+      if (!size) return basePrice;
+      const multipliers = SIZE_MULTIPLIERS[category];
+      if (multipliers && multipliers[size]) {
+        return Math.round(basePrice * multipliers[size]);
+      }
+      return basePrice;
+    }
 
     const menuItems = [
       { id: 1, name: 'Paneer Tikka', price: 199, oldPrice: 249, category: 'starters', image: 'https://images.unsplash.com/photo-1599510120657-0e265ceea4d1?w=400&h=300&fit=crop', rating: 4.8, calories: 285, time: '20 min', tag: 'Popular', spicy: true },
@@ -815,15 +961,23 @@
       { id: 19, name: 'Garlic Naan', price: 59, oldPrice: null, category: 'breads', image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=300&fit=crop', rating: 4.9, calories: 165, time: '8 min', tag: 'Popular', spicy: false },
       { id: 20, name: 'Laccha Paratha', price: 55, oldPrice: null, category: 'breads', image: 'https://images.unsplash.com/photo-1565557623814-dea706400c64?w=400&h=300&fit=crop', rating: 4.6, calories: 180, time: '10 min', tag: null, spicy: false },
       { id: 21, name: 'Stuffed Kulcha', price: 69, oldPrice: 79, category: 'breads', image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400&h=300&fit=crop', rating: 4.7, calories: 220, time: '12 min', tag: 'New', spicy: false },
-      { id: 22, name: 'Gulab Jamun', price: 99, oldPrice: null, category: 'desserts', image: 'https://images.unsplash.com/photo-1585080155469-5a072bf1f30c?w=400&h=300&fit=crop', rating: 4.8, calories: 280, time: '5 min', tag: 'Popular', spicy: false },
-      { id: 23, name: 'Rasmalai', price: 129, oldPrice: null, category: 'desserts', image: 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=400&h=300&fit=crop', rating: 4.9, calories: 250, time: '5 min', tag: 'Special', spicy: false },
-      { id: 24, name: 'Chocolate Brownie', price: 149, oldPrice: 179, category: 'desserts', image: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400&h=300&fit=crop', rating: 4.7, calories: 350, time: '10 min', tag: 'New', spicy: false },
-      { id: 25, name: 'Kulfi', price: 89, oldPrice: null, category: 'desserts', image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=300&fit=crop', rating: 4.6, calories: 200, time: '5 min', tag: null, spicy: false },
-      { id: 26, name: 'Masala Chai', price: 39, oldPrice: null, category: 'drinks', image: 'https://images.unsplash.com/photo-1597318177304-eb5edd48df85?w=400&h=300&fit=crop', rating: 4.8, calories: 80, time: '5 min', tag: 'Popular', spicy: false },
-      { id: 27, name: 'Mango Lassi', price: 79, oldPrice: null, category: 'drinks', image: 'https://images.unsplash.com/photo-1582209921212-f6e1141e3055?w=400&h=300&fit=crop', rating: 4.9, calories: 180, time: '5 min', tag: 'Popular', spicy: false },
-      { id: 28, name: 'Fresh Lime Soda', price: 49, oldPrice: null, category: 'drinks', image: 'https://images.unsplash.com/photo-1550330328-fbe7c395d18c?w=400&h=300&fit=crop', rating: 4.5, calories: 60, time: '3 min', tag: null, spicy: false },
-      { id: 29, name: 'Cold Coffee', price: 99, oldPrice: 119, category: 'drinks', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop', rating: 4.7, calories: 220, time: '5 min', tag: 'New', spicy: false },
-      { id: 30, name: 'Buttermilk', price: 45, oldPrice: null, category: 'drinks', image: 'https://images.unsplash.com/photo-1582209921212-f6e1141e3055?w=400&h=300&fit=crop', rating: 4.6, calories: 70, time: '3 min', tag: 'Healthy', spicy: false }
+      { id: 22, name: 'Margherita Pizza', price: 249, oldPrice: 299, category: 'pizza', image: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=400&h=300&fit=crop', rating: 4.8, calories: 350, time: '20 min', tag: 'Popular', spicy: false, sizes: ['7 inch', '8 inch', '10 inch'] },
+      { id: 23, name: 'Pepperoni Pizza', price: 279, oldPrice: 329, category: 'pizza', image: 'https://images.unsplash.com/photo-1628840042765-356cda07f4ee?w=400&h=300&fit=crop', rating: 4.9, calories: 420, time: '22 min', tag: 'Popular', spicy: true, sizes: ['7 inch', '8 inch', '10 inch'] },
+      { id: 24, name: 'Veggie Delight Pizza', price: 259, oldPrice: null, category: 'pizza', image: 'https://images.unsplash.com/photo-1514306688989-be7149c159d4?w=400&h=300&fit=crop', rating: 4.6, calories: 320, time: '20 min', tag: 'New', spicy: false, sizes: ['7 inch', '8 inch', '10 inch'] },
+      { id: 25, name: 'BBQ Chicken Pizza', price: 299, oldPrice: null, category: 'pizza', image: 'https://images.unsplash.com/photo-1513689915372-e9d42b0645ba?w=400&h=300&fit=crop', rating: 4.7, calories: 410, time: '25 min', tag: 'Special', spicy: true, sizes: ['7 inch', '8 inch', '10 inch'] },
+      { id: 26, name: 'Chow Mein', price: 149, oldPrice: 179, category: 'noodles', image: 'https://images.unsplash.com/photo-1569718733890-5aa4cdc6c4c5?w=400&h=300&fit=crop', rating: 4.7, calories: 280, time: '15 min', tag: null, spicy: false, sizes: ['Half Plate', 'Full Plate'] },
+      { id: 27, name: 'Hakka Noodles', price: 159, oldPrice: null, category: 'noodles', image: 'https://images.unsplash.com/photo-1585521941534-80f20695aae0?w=400&h=300&fit=crop', rating: 4.8, calories: 300, time: '16 min', tag: 'Popular', spicy: false, sizes: ['Half Plate', 'Full Plate'] },
+      { id: 28, name: 'Schezuan Noodles', price: 169, oldPrice: 199, category: 'noodles', image: 'https://images.unsplash.com/photo-1629521883842-e6bf93a34330?w=400&h=300&fit=crop', rating: 4.9, calories: 320, time: '17 min', tag: 'Spicy', spicy: true, sizes: ['Half Plate', 'Full Plate'] },
+      { id: 29, name: 'Veg Noodles', price: 129, oldPrice: null, category: 'noodles', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop', rating: 4.5, calories: 240, time: '14 min', tag: null, spicy: false, sizes: ['Half Plate', 'Full Plate'] },
+      { id: 30, name: 'Gulab Jamun', price: 99, oldPrice: null, category: 'desserts', image: 'https://images.unsplash.com/photo-1585080155469-5a072bf1f30c?w=400&h=300&fit=crop', rating: 4.8, calories: 280, time: '5 min', tag: 'Popular', spicy: false },
+      { id: 31, name: 'Rasmalai', price: 129, oldPrice: null, category: 'desserts', image: 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=400&h=300&fit=crop', rating: 4.9, calories: 250, time: '5 min', tag: 'Special', spicy: false },
+      { id: 32, name: 'Chocolate Brownie', price: 149, oldPrice: 179, category: 'desserts', image: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400&h=300&fit=crop', rating: 4.7, calories: 350, time: '10 min', tag: 'New', spicy: false },
+      { id: 33, name: 'Kulfi', price: 89, oldPrice: null, category: 'desserts', image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=300&fit=crop', rating: 4.6, calories: 200, time: '5 min', tag: null, spicy: false },
+      { id: 34, name: 'Masala Chai', price: 39, oldPrice: null, category: 'drinks', image: 'https://images.unsplash.com/photo-1597318177304-eb5edd48df85?w=400&h=300&fit=crop', rating: 4.8, calories: 80, time: '5 min', tag: 'Popular', spicy: false },
+      { id: 35, name: 'Mango Lassi', price: 79, oldPrice: null, category: 'drinks', image: 'https://images.unsplash.com/photo-1582209921212-f6e1141e3055?w=400&h=300&fit=crop', rating: 4.9, calories: 180, time: '5 min', tag: 'Popular', spicy: false },
+      { id: 36, name: 'Fresh Lime Soda', price: 49, oldPrice: null, category: 'drinks', image: 'https://images.unsplash.com/photo-1550330328-fbe7c395d18c?w=400&h=300&fit=crop', rating: 4.5, calories: 60, time: '3 min', tag: null, spicy: false },
+      { id: 37, name: 'Cold Coffee', price: 99, oldPrice: 119, category: 'drinks', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop', rating: 4.7, calories: 220, time: '5 min', tag: 'New', spicy: false },
+      { id: 38, name: 'Buttermilk', price: 45, oldPrice: null, category: 'drinks', image: 'https://images.unsplash.com/photo-1582209921212-f6e1141e3055?w=400&h=300&fit=crop', rating: 4.6, calories: 70, time: '3 min', tag: 'Healthy', spicy: false }
     ];
 
     let cart = JSON.parse(localStorage.getItem('spicecraft_cart')) || [];
@@ -881,9 +1035,15 @@
           </div>
         `;
       } else {
-        qtyHTML = `
-          <button onclick="addToCart(${item.id})" class="add-btn w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#A8E63D] flex items-center justify-center text-[#0D0D0D] font-bold text-lg shadow-lg shadow-[#A8E63D]/30">+</button>
-        `;
+        if (item.sizes) {
+          qtyHTML = `
+            <button onclick="openSizeModal(${item.id}, '${item.name}')" class="add-btn w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#A8E63D] flex items-center justify-center text-[#0D0D0D] font-bold text-lg shadow-lg shadow-[#A8E63D]/30">+</button>
+          `;
+        } else {
+          qtyHTML = `
+            <button onclick="addToCart(${item.id})" class="add-btn w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#A8E63D] flex items-center justify-center text-[#0D0D0D] font-bold text-lg shadow-lg shadow-[#A8E63D]/30">+</button>
+          `;
+        }
       }
 
       let priceHTML = `<span class="dish-price text-white">₹${item.price}</span>`;
@@ -966,20 +1126,79 @@
       renderFoodItems(filtered);
     }
 
-    function addToCart(id) {
+    function openSizeModal(itemId, itemName) {
+      const item = menuItems.find(m => m.id === itemId);
+      if (!item || !item.sizes) return;
+
+      pendingSizeSelection = { itemId, itemName, sizes: item.sizes };
+
+      const modal = document.getElementById('sizeModal');
+      const title = document.getElementById('sizeModalTitle');
+      const container = document.getElementById('sizeOptionsContainer');
+
+      title.textContent = `Select Size - ${itemName}`;
+      container.innerHTML = '';
+
+      item.sizes.forEach(size => {
+        const btn = document.createElement('button');
+        btn.className = 'size-btn';
+        const finalPrice = getPriceForSize(item.price, item.category, size);
+        const priceChange = finalPrice - item.price;
+        const priceText = priceChange > 0 ? `+₹${priceChange}` : '';
+        btn.textContent = `${size} ${priceText}`;
+        btn.onclick = () => {
+          document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          pendingSizeSelection.selectedSize = size;
+        };
+        container.appendChild(btn);
+      });
+
+      modal.classList.add('open');
+    }
+
+    function closeSizeModal(event) {
+      if (event && event.target.id !== 'sizeModal') return;
+      const modal = document.getElementById('sizeModal');
+      if (modal) modal.classList.remove('open');
+      pendingSizeSelection = null;
+    }
+
+    function confirmSize() {
+      if (!pendingSizeSelection || !pendingSizeSelection.selectedSize) {
+        showToast('Please select a size! 📏');
+        return;
+      }
+
+      addToCart(pendingSizeSelection.itemId, pendingSizeSelection.selectedSize);
+      closeSizeModal();
+    }
+
+    function addToCart(id, size = null) {
       const item = menuItems.find(m => m.id === id);
       if (!item) return;
 
-      const existing = cart.find(c => c.id === id);
+      const finalPrice = getPriceForSize(item.price, item.category, size);
+      const existing = cart.find(c => c.id === id && c.size === (size || undefined));
+
       if (existing) {
         existing.qty++;
       } else {
-        cart.push({ id, name: item.name, price: item.price, qty: 1 });
+        cart.push({ 
+          id, 
+          name: item.name, 
+          price: finalPrice, 
+          basePrice: item.price,
+          category: item.category,
+          qty: 1,
+          size: size || undefined
+        });
       }
 
       saveCart();
       updateCartUI();
-      showToast(`${item.name} added! 🎉`);
+      const sizeText = size ? ` (${size})` : '';
+      showToast(`${item.name}${sizeText} added! 🎉`);
       filterByCategory(currentCategory);
     }
 
@@ -1074,15 +1293,6 @@
           bottomBar.classList.remove('visible');
         }
       }
-
-      const minOrderWarning = document.getElementById('minOrderWarning');
-      if (minOrderWarning) {
-        if (subtotal > 0 && subtotal < 149) {
-          minOrderWarning.classList.remove('hidden');
-        } else {
-          minOrderWarning.classList.add('hidden');
-        }
-      }
     }
 
     function renderCartItems() {
@@ -1106,10 +1316,11 @@
         const menuItem = menuItems.find(m => m.id === item.id);
         const itemDiv = document.createElement('div');
         itemDiv.className = 'bg-[#1A1A1A] rounded-2xl p-3 flex items-center gap-3';
+        const sizeText = item.size ? ` (${item.size})` : '';
         itemDiv.innerHTML = `
           <img src="${menuItem?.image}" alt="${item.name}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0" onerror="this.style.background='linear-gradient(135deg, #A8E63D 0%, #7dc621 100%)'">
           <div class="flex-1 min-w-0">
-            <h4 class="text-white text-xs sm:text-sm font-medium truncate">${item.name}</h4>
+            <h4 class="text-white text-xs sm:text-sm font-medium truncate">${item.name}${sizeText}</h4>
             <p class="text-[#A8E63D] text-xs sm:text-sm font-semibold">₹${item.price * item.qty}</p>
           </div>
           <div class="qty-container" style="gap: 4px; padding: 2px 4px; flex-shrink-0;">
@@ -1236,7 +1447,7 @@
 
       if (nameInput) nameInput.value = savedName;
       if (phoneInput) phoneInput.value = savedPhone;
-      if (addressInput) addressAddress = savedAddress;
+      if (addressInput) addressInput.value = savedAddress;
     }
 
     function showBarcode() {
@@ -1265,7 +1476,6 @@
       const total = subtotal + delivery;
       const orderId = document.getElementById('orderId').textContent;
 
-      // Save customer data before payment
       saveCustomerData();
 
       const processing = document.getElementById('paymentProcessing');
@@ -1277,13 +1487,11 @@
 
       showToast('Opening UPI app... 💳');
 
-      // Simulate payment completion after 3 seconds
       setTimeout(() => {
         if (processing) processing.classList.remove('show');
         
         showSuccessAnimation();
 
-        // After success animation, send WhatsApp order
         setTimeout(() => {
           sendWhatsAppOrder('paid');
         }, 1200);
@@ -1310,7 +1518,8 @@
       message += `━━━━━━━━━━━━━━\n`;
 
       cart.forEach(item => {
-        message += `${item.qty}x ${item.name} – ₹${item.price}\n`;
+        const sizeText = item.size ? ` (${item.size})` : '';
+        message += `${item.qty}x ${item.name}${sizeText} – ₹${item.price}\n`;
       });
 
       message += `\n💰 *PRICING*\n`;
@@ -1336,7 +1545,6 @@
 
       window.open(whatsappUrl, '_blank');
 
-      // Clear cart and form
       cart = [];
       saveCart();
       updateCartUI();
@@ -1369,13 +1577,6 @@
         return;
       }
 
-      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-
-      if (subtotal < 149) {
-        showToast('Min. order ₹149! 💰');
-        return;
-      }
-
       if (cart.length === 0) {
         showToast('Cart empty! 🛒');
         return;
@@ -1386,7 +1587,6 @@
         return;
       }
 
-      // For COD
       saveCustomerData();
       showSuccessAnimation();
 
@@ -1408,5 +1608,5 @@
     selectPayment('cod');
     loadCustomerData();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf47916522095fd',t:'MTc3MTMyMjc5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf4a79a660095fd',t:'MTc3MTMyNDcwMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
