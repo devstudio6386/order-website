@@ -324,6 +324,21 @@
       transform: scale(0.98);
     }
 
+    .upi-btn {
+      background: linear-gradient(135deg, #1E90FF 0%, #1873CC 100%);
+      transition: all 0.3s ease;
+      will-change: transform;
+    }
+
+    .upi-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 30px rgba(30, 144, 255, 0.3);
+    }
+
+    .upi-btn:active {
+      transform: scale(0.98);
+    }
+
     .dish-name {
       font-size: 16px;
       font-weight: 700;
@@ -523,6 +538,62 @@
       color: #0D0D0D;
     }
 
+    .payment-radio {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 2px solid #333;
+      background: #0D0D0D;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .payment-radio:hover {
+      border-color: #A8E63D;
+      background: rgba(168, 230, 61, 0.05);
+    }
+
+    .payment-radio.selected {
+      border-color: #A8E63D;
+      background: rgba(168, 230, 61, 0.1);
+    }
+
+    .payment-radio input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #A8E63D;
+    }
+
+    .payment-radio label {
+      flex: 1;
+      cursor: pointer;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      font-weight: 500;
+    }
+
+    .payment-info {
+      background: rgba(168, 230, 61, 0.1);
+      border: 1px solid rgba(168, 230, 61, 0.3);
+      border-radius: 12px;
+      padding: 12px;
+      color: #A8E63D;
+      font-size: 12px;
+      text-align: center;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .payment-info.show {
+      display: block;
+    }
+
     @media (max-width: 360px) {
       .dish-name {
         font-size: 14px;
@@ -560,7 +631,7 @@
             <div class="absolute inset-0 flex items-center justify-between p-4 sm:p-6">
               <div>
                 <p class="text-gray-400 text-xs sm:text-sm mb-1" id="timingDisplay">10 AM – 11 PM</p>
-                <h1 class="text-white text-lg sm:text-2xl font-bold leading-tight" id="greetingDisplay">ZIXY BITE<br>RESTURANT 🍽</h1>
+                <h1 class="text-white text-lg sm:text-2xl font-bold leading-tight" id="greetingDisplay">Let's Eat<br>Healthy Food 🍲</h1>
               </div>
               <div class="text-4xl sm:text-6xl">🍲</div>
             </div>
@@ -695,11 +766,16 @@
               <!-- Payment Method Section -->
               <div class="mt-4 pt-4 border-t border-gray-800">
                 <h3 class="text-white font-semibold mb-3 text-sm">Payment Method</h3>
-                <div class="space-y-2">
-                  <div class="payment-option w-full bg-[#1A1A1A] border-2 border-[#A8E63D] text-white rounded-xl py-3 px-4 text-xs sm:text-sm font-medium flex items-center justify-between">
-                    <span>💵 Cash on Delivery</span>
-                    <span class="text-[#A8E63D]">✓</span>
-                  </div>
+                <div class="space-y-2" id="paymentOptions">
+                  <label class="payment-radio selected" onclick="selectPaymentMethod('cod', event)">
+                    <input type="radio" name="payment" value="cod" checked>
+                    <label style="margin: 0; cursor: pointer;">💵 Cash on Delivery</label>
+                  </label>
+                  <label class="payment-radio" onclick="selectPaymentMethod('upi', event)">
+                    <input type="radio" name="payment" value="upi">
+                    <label style="margin: 0; cursor: pointer;">📱 Pay via UPI</label>
+                  </label>
+                  <div id="upiInfo" class="payment-info">ℹ️ Pay first, confirmation auto-sends to WhatsApp</div>
                 </div>
               </div>
             </div>
@@ -707,8 +783,8 @@
         </div>
 
         <!-- Price Breakdown & Checkout -->
-        <div class="p-4 border-t border-gray-800 bg-[#1A1A1A] flex-shrink-0">
-          <div class="space-y-2 mb-4">
+        <div class="p-4 border-t border-gray-800 bg-[#1A1A1A] flex-shrink-0 space-y-3">
+          <div class="space-y-2">
             <div class="flex justify-between text-gray-400 text-xs sm:text-sm">
               <span>Subtotal</span>
               <span>₹<span id="subtotal">0</span></span>
@@ -722,12 +798,21 @@
               <span>₹<span id="grandTotal">0</span></span>
             </div>
           </div>
-          <button id="checkoutBtn" onclick="checkout()" class="whatsapp-btn w-full py-3 sm:py-4 rounded-2xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2">
-            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-            <span id="checkoutBtnText">Order on WhatsApp</span>
-          </button>
+          
+          <div id="checkoutButtonsContainer" class="space-y-2">
+            <button id="checkoutBtn" onclick="checkout('cod')" class="whatsapp-btn w-full py-3 sm:py-4 rounded-2xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+              <span id="checkoutBtnText">Order on WhatsApp</span>
+            </button>
+            <button id="upiCheckoutBtn" onclick="processUPIPayment()" class="upi-btn w-full py-3 sm:py-4 rounded-2xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2" style="display: none;">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+              </svg>
+              <span>Pay via UPI</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -767,6 +852,7 @@
       restaurant_name: 'SpiceCraft Kitchen',
       greeting_text: 'Let\'s Eat Healthy Food',
       whatsapp_number: '916386754482',
+      upi_number: '9876543210@googleplay',
       location: 'Muneshwar Vihar Colony, Barabanki, UP 225001',
       timing: '10 AM – 11 PM',
       background_color: '#0D0D0D',
@@ -779,6 +865,8 @@
     let config = { ...defaultConfig };
     let currentOrderData = null;
     let pendingSizeSelection = null;
+    let selectedPaymentMethod = 'cod';
+    let paymentProcessing = false;
 
     function getPriceForSize(basePrice, category, size) {
       if (!size) return basePrice;
@@ -791,15 +879,15 @@
 
     const menuItems = [
       { id: 1, name: 'Paneer Tikka', price: 199, oldPrice: 249, category: 'starters', image: 'https://images.unsplash.com/photo-1599510120657-0e265ceea4d1?w=400&h=300&fit=crop', rating: 4.8, calories: 285, time: '20 min', tag: 'Popular', spicy: true },
-      { id: 2, name: 'Crispy Veg Spring Rolls', price: 149, oldPrice: null, category: 'starters', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop', rating: 4.5, calories: 220, time: '15 min', tag: 'New', spicy: false },
+      { id: 2, name: 'Crispy Veg Spring Rolls', price: 149, oldPrice: null, category: 'starters', image: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=400&h=300&fit=crop', rating: 4.5, calories: 220, time: '15 min', tag: 'New', spicy: false },
       { id: 3, name: 'Chicken Seekh Kebab', price: 249, oldPrice: 299, category: 'starters', image: 'https://images.unsplash.com/photo-1566103412396-bda4a96e1f37?w=400&h=300&fit=crop', rating: 4.9, calories: 340, time: '25 min', tag: 'Popular', spicy: true },
       { id: 4, name: 'Mushroom Manchurian', price: 179, oldPrice: null, category: 'starters', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop', rating: 4.6, calories: 265, time: '18 min', tag: null, spicy: false },
-      { id: 5, name: 'Tandoori Chicken', price: 299, oldPrice: 349, category: 'starters', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop', rating: 4.9, calories: 380, time: '30 min', tag: 'Spicy', spicy: true },
+      { id: 5, name: 'Tandoori Chicken', price: 299, oldPrice: 349, category: 'starters', image: 'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&h=300&fit=crop', rating: 4.9, calories: 380, time: '30 min', tag: 'Spicy', spicy: true },
       { id: 6, name: 'Butter Chicken', price: 329, oldPrice: 399, category: 'mains', image: 'https://images.unsplash.com/photo-1565557623814-dea706400c64?w=400&h=300&fit=crop', rating: 4.9, calories: 490, time: '35 min', tag: 'Popular', spicy: false },
-      { id: 7, name: 'Paneer Butter Masala', price: 269, oldPrice: null, category: 'mains', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop', rating: 4.7, calories: 420, time: '30 min', tag: null, spicy: false },
-      { id: 8, name: 'Dal Makhani', price: 219, oldPrice: null, category: 'mains', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop', rating: 4.8, calories: 350, time: '25 min', tag: 'Popular', spicy: false },
+      { id: 7, name: 'Paneer Butter Masala', price: 269, oldPrice: null, category: 'mains', image: 'https://images.unsplash.com/photo-1645112411341-6c4ee32510d8?w=400&h=300&fit=crop', rating: 4.7, calories: 420, time: '30 min', tag: null, spicy: false },
+      { id: 8, name: 'Dal Makhani', price: 219, oldPrice: null, category: 'mains', image: 'https://images.unsplash.com/photo-1626200419401-a36cd95ee387?w=400&h=300&fit=crop', rating: 4.8, calories: 350, time: '25 min', tag: 'Popular', spicy: false },
       { id: 9, name: 'Chicken Curry', price: 289, oldPrice: 329, category: 'mains', image: 'https://images.unsplash.com/photo-1603452574291-e1b89bef42c0?w=400&h=300&fit=crop', rating: 4.6, calories: 410, time: '35 min', tag: null, spicy: true },
-      { id: 10, name: 'Palak Paneer', price: 239, oldPrice: null, category: 'mains', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop', rating: 4.5, calories: 320, time: '28 min', tag: 'Healthy', spicy: false },
+      { id: 10, name: 'Palak Paneer', price: 239, oldPrice: null, category: 'mains', image: 'https://images.unsplash.com/photo-1585238341710-4913dfb1d08b?w=400&h=300&fit=crop', rating: 4.5, calories: 320, time: '28 min', tag: 'Healthy', spicy: false },
       { id: 11, name: 'Mutton Rogan Josh', price: 399, oldPrice: 449, category: 'mains', image: 'https://images.unsplash.com/photo-1626200419401-a36cd95ee387?w=400&h=300&fit=crop', rating: 4.9, calories: 520, time: '45 min', tag: 'Special', spicy: true },
       { id: 12, name: 'Kadhai Paneer', price: 249, oldPrice: null, category: 'mains', image: 'https://images.unsplash.com/photo-1585238341710-4913dfb1d08b?w=400&h=300&fit=crop', rating: 4.7, calories: 380, time: '25 min', tag: null, spicy: true },
       { id: 13, name: 'Hyderabadi Chicken Biryani', price: 299, oldPrice: 349, category: 'biryani', image: 'https://images.unsplash.com/photo-1584584867912-14860b3cb34d?w=400&h=300&fit=crop', rating: 4.9, calories: 580, time: '40 min', tag: 'Popular', spicy: true },
@@ -1191,6 +1279,29 @@
       container.appendChild(fragment);
     }
 
+    function selectPaymentMethod(method, event) {
+      event.preventDefault();
+      selectedPaymentMethod = method;
+
+      const labels = document.querySelectorAll('.payment-radio');
+      labels.forEach(label => label.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      const upiCheckoutBtn = document.getElementById('upiCheckoutBtn');
+      const upiInfo = document.getElementById('upiInfo');
+
+      if (method === 'cod') {
+        checkoutBtn.style.display = 'flex';
+        upiCheckoutBtn.style.display = 'none';
+        upiInfo.classList.remove('show');
+      } else {
+        checkoutBtn.style.display = 'none';
+        upiCheckoutBtn.style.display = 'flex';
+        upiInfo.classList.add('show');
+      }
+    }
+
     function openCart() {
       renderCartItems();
       const backdrop = document.getElementById('cartBackdrop');
@@ -1263,7 +1374,7 @@
       const delivery = subtotal >= 499 ? 0 : 40;
       const total = subtotal + delivery;
 
-      let message = `🍽️ *NEW ORDER FROM SPICECRAFT* 🍽️\n\n`;
+      let message = `🍽️ *PAYMENT CONFIRMED - ORDER FROM SPICECRAFT* 🍽️\n\n`;
       message += `📦 *ORDER DETAILS*\n`;
       message += `━━━━━━━━━━━━━━\n`;
 
@@ -1284,14 +1395,86 @@
       message += `Phone: ${currentOrderData?.phone || 'N/A'}\n`;
       message += `Address: ${currentOrderData?.address || 'N/A'}\n`;
 
-      message += `\n💵 *PAYMENT*\n`;
+      message += `\n✅ *PAYMENT STATUS*\n`;
       message += `━━━━━━━━━━━━━━\n`;
-      message += `Cash on Delivery`;
+      message += `Status: Successfully Paid via UPI\n`;
+      message += `Time: ${new Date().toLocaleString()}`;
 
       return message;
     }
 
-    function checkout() {
+    function processUPIPayment() {
+      const nameInput = document.getElementById('customerName');
+      const phoneInput = document.getElementById('customerPhone');
+      const addressInput = document.getElementById('customerAddress');
+
+      const name = nameInput?.value?.trim() || '';
+      const phone = phoneInput?.value?.trim() || '';
+      const address = addressInput?.value?.trim() || '';
+
+      if (!name || !phone || !address) {
+        showToast('Please fill all details! 📝');
+        return;
+      }
+
+      if (cart.length === 0) {
+        showToast('Cart empty! 🛒');
+        return;
+      }
+
+      const upiCheckoutBtn = document.getElementById('upiCheckoutBtn');
+      if (paymentProcessing) return;
+      
+      paymentProcessing = true;
+      upiCheckoutBtn.disabled = true;
+      upiCheckoutBtn.textContent = '💳 Processing...';
+
+      saveCustomerData();
+
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const delivery = subtotal >= 499 ? 0 : 40;
+      const total = subtotal + delivery;
+      const upiId = config.upi_number || defaultConfig.upi_number;
+      const uniqueRef = Math.random().toString(36).substring(7).toUpperCase();
+      
+      const upiString = `upi://pay?pa=${upiId}&pn=SpiceCraft&am=${total}&tn=FoodOrder&tr=${uniqueRef}`;
+
+      // Open UPI app
+      window.open(upiString, '_blank', 'noopener,noreferrer');
+
+      // Wait 3 seconds then send confirmation to WhatsApp
+      setTimeout(() => {
+        showSuccessAnimation();
+
+        setTimeout(() => {
+          const message = buildOrderMessage();
+          const encoded = encodeURIComponent(message);
+          window.open(`https://wa.me/916386754482?text=${encoded}`, '_blank', 'noopener,noreferrer');
+
+          setTimeout(() => {
+            // Clear cart and form
+            cart = [];
+            saveCart();
+            updateCartUI();
+            closeCart();
+            filterByCategory(currentCategory);
+
+            if (nameInput) nameInput.value = '';
+            if (phoneInput) phoneInput.value = '';
+            if (addressInput) addressInput.value = '';
+
+            showToast('Order placed! 🎉');
+            
+            // Reset button
+            paymentProcessing = false;
+            upiCheckoutBtn.disabled = false;
+            upiCheckoutBtn.textContent = '📱 Pay via UPI';
+          }, 1000);
+        }, 800);
+      }, 3000);
+    }
+
+    function checkout(method) {
       const nameInput = document.getElementById('customerName');
       const phoneInput = document.getElementById('customerPhone');
       const addressInput = document.getElementById('customerAddress');
@@ -1316,9 +1499,7 @@
       setTimeout(() => {
         const message = buildOrderMessage();
         const encoded = encodeURIComponent(message);
-        
-        // Auto-open WhatsApp and send
-        window.location.href = `https://wa.me/916386754482?text=${encoded}`;
+        window.open(`https://wa.me/916386754482?text=${encoded}`, '_blank', 'noopener,noreferrer');
 
         setTimeout(() => {
           cart = [];
@@ -1326,10 +1507,6 @@
           updateCartUI();
           closeCart();
           filterByCategory(currentCategory);
-
-          const nameInput = document.getElementById('customerName');
-          const phoneInput = document.getElementById('customerPhone');
-          const addressInput = document.getElementById('customerAddress');
 
           if (nameInput) nameInput.value = '';
           if (phoneInput) phoneInput.value = '';
@@ -1352,5 +1529,5 @@
     updateCartUI();
     loadCustomerData();
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf5502d671795fd',t:'MTc3MTMzMTYwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cf5ad2ca2d954b3',t:'MTc3MTMzNTQxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
